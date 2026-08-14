@@ -4,8 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .color-box {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .box {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9em;
+        }
+        
+        .red { background-color: #ff6b6b; }
+        .orange { background-color: #ffa500; }
+        .yellow { background-color: #ffd93d; color: #333; }
+        .green { background-color: #6bcf7f; }
+        .blue { background-color: #4ecdc4; }
+        .purple { background-color: #a78bfa; }
+        .pink { background-color: #ff69b4; }
+    </style>
 </head>
 <body>
-    <h1>Hello World! 2 </h1>
+    <div class="container">
+        <h1>🌈 Hello World! 2 🌈</h1>
+        <div class="color-box">
+            <div class="box red">Red</div>
+            <div class="box orange">Orange</div>
+            <div class="box yellow">Yellow</div>
+            <div class="box green">Green</div>
+            <div class="box blue">Blue</div>
+            <div class="box purple">Purple</div>
+            <div class="box pink">Pink</div>
+        </div>
+    </div>
 </body>
 </html>
