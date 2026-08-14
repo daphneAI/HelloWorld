@@ -1,0 +1,48 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Add Hugging Face remote and push
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Clone the HF space repository
+          git clone https://user:${HF_TOKEN}@huggingface.co/spaces/daphneAI/space2 hf-space
+          
+          # Copy all files from current repo to HF space (except .git)
+          cp -r ./* hf-space/ || true
+          cp -r ./.github hf-space/ 2>/dev/null || true
+          
+          # Navigate to HF space directory
+          cd hf-space
+          
+          # Configure git
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          
+          # Add and commit changes
+          git add .
+          git commit -m "Deploy from GitHub: $(git rev-parse --short HEAD)" || echo "No changes to commit"
+          
+          # Push to Hugging Face
+          git push
