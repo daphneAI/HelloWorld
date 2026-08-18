@@ -1,78 +1,1463 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin: 0;
-            padding: 20px;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-        
-        h1 {
-            color: #667eea;
-            font-size: 3em;
-            margin: 0 0 20px 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .color-box {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        
-        .box {
-            width: 80px;
-            height: 80px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 0.9em;
-        }
-        
-        .red { background-color: #ff6b6b; }
-        .orange { background-color: #ffa500; }
-        .yellow { background-color: #ffd93d; color: #333; }
-        .green { background-color: #6bcf7f; }
-        .blue { background-color: #4ecdc4; }
-        .purple { background-color: #a78bfa; }
-        .pink { background-color: #ff69b4; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlexFlow Production Floor</title>
+  <style>
+    :root {
+      --bg: #071521;
+      --bg-2: #0d1d2d;
+      --panel: rgba(14, 27, 40, 0.92);
+      --panel-2: rgba(18, 35, 53, 0.78);
+      --card: rgba(18, 48, 67, 0.9);
+      --line: rgba(132, 188, 255, 0.25);
+      --line-strong: rgba(92, 194, 255, 0.6);
+      --text: #edf7ff;
+      --muted: #9bc2dd;
+      --cyan: #45d1ff;
+      --blue: #4a8dff;
+      --green: #4ae5a5;
+      --amber: #ffbf47;
+      --red: #ff6f7a;
+      --purple: #b88cff;
+      --shadow: 0 18px 40px rgba(2, 11, 20, 0.5);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(64, 138, 255, 0.22), transparent 30%),
+        linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+      color: var(--text);
+    }
+
+    body {
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: rgba(7, 21, 33, 0.7);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 2vw, 2.8rem);
+      letter-spacing: 0.02em;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary { background: linear-gradient(135deg, var(--cyan), var(--blue)); color: #03131d; }
+    .secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--line); color: var(--text); }
+    .ghost { background: rgba(255, 191, 71, 0.12); color: #ffd37d; border: 1px solid rgba(255, 191, 71, 0.32); }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .kpi {
+      background: linear-gradient(135deg, rgba(10, 35, 60, 0.8), rgba(15, 25, 45, 0.85));
+      border: 2px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(69, 209, 255, 0.1);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      animation: top-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes top-glow {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .kpi .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .kpi .value {
+      font-size: clamp(1.5rem, 2vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr) 300px;
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(10, 22, 32, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.012);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .panel-body {
+      padding: 16px 18px 18px;
+    }
+
+    .global-config { margin-bottom: 14px; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .station-controls {
+      display: grid;
+      gap: 12px;
+    }
+
+    .station-config-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(11, 30, 42, 0.8);
+      padding: 12px 12px 8px;
+    }
+
+    .station-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .station-head strong {
+      font-size: 1rem;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.15);
+      opacity: 0.9;
+    }
+
+    .tag.process { background: rgba(74,141,255,0.18); color: #a9d2ff; }
+    .tag.inspection { background: rgba(255,191,71,0.18); color: #ffd98b; }
+    .tag.repair { background: rgba(255,111,122,0.18); color: #ffb7bf; }
+    .tag.output { background: rgba(74,229,165,0.18); color: #a9f5d2; }
+
+    .field.small {
+      margin-bottom: 8px;
+    }
+
+    .board {
+      position: relative;
+      min-height: 760px;
+      overflow: hidden;
+    }
+
+    .board-inner {
+      position: relative;
+      padding: 18px 18px 14px;
+      height: 100%;
+      min-height: 760px;
+    }
+
+    .floor {
+      position: relative;
+      height: 680px;
+      background:
+        linear-gradient(rgba(86, 158, 255, 0.06), rgba(86,158,255,0.06)),
+        linear-gradient(180deg, rgba(8,17,24,0.9), rgba(11,31,46,0.9));
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .floor-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+
+    .station-row {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 30px 20px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .station {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 140px;
+      flex: 0 0 calc(14.28% - 8px);
+      min-height: 220px;
+      border-radius: 14px;
+      border: 2px solid;
+      background: linear-gradient(135deg, rgba(18, 45, 80, 0.95), rgba(8, 20, 35, 0.9));
+      padding: 14px 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    .station[data-type="source"] { border-color: rgba(69, 209, 255, 0.9); box-shadow: 0 0 20px rgba(69, 209, 255, 0.3); }
+    .station[data-type="inspection"] { border-color: rgba(255, 191, 71, 0.9); box-shadow: 0 0 20px rgba(255, 191, 71, 0.3); }
+    .station[data-type="repair"] { border-color: rgba(255, 111, 122, 0.9); box-shadow: 0 0 20px rgba(255, 111, 122, 0.3); }
+    .station[data-type="output"] { border-color: rgba(74, 229, 165, 0.9); box-shadow: 0 0 20px rgba(74, 229, 165, 0.3); }
+
+    .station.bottleneck {
+      border-color: rgba(255, 191, 71, 1);
+      border-width: 3px;
+      box-shadow: 0 0 40px rgba(255, 191, 71, 0.8), inset 0 0 30px rgba(255, 191, 71, 0.25), 0 0 60px rgba(255, 191, 71, 0.4);
+      animation: bottleneck-pulse 0.8s ease-in-out infinite, bottleneck-glow 2s ease-in-out infinite;
+      background: linear-gradient(135deg, rgba(40, 35, 15, 0.95), rgba(25, 20, 8, 0.95));
+    }
+
+    .station.critical-bottleneck {
+      border-color: rgba(255, 111, 122, 1);
+      border-width: 3px;
+      box-shadow: 0 0 50px rgba(255, 111, 122, 0.9), inset 0 0 40px rgba(255, 111, 122, 0.3), 0 0 80px rgba(255, 111, 122, 0.5);
+      animation: critical-pulse 0.6s ease-in-out infinite, critical-glow 1.5s ease-in-out infinite;
+      background: linear-gradient(135deg, rgba(50, 20, 25, 0.95), rgba(35, 12, 15, 0.95));
+    }
+
+    @keyframes bottleneck-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+
+    @keyframes bottleneck-glow {
+      0%, 100% { border-color: rgba(255, 191, 71, 1); }
+      50% { border-color: rgba(255, 220, 130, 1); }
+    }
+
+    @keyframes critical-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    @keyframes critical-glow {
+      0%, 100% { border-color: rgba(255, 111, 122, 1); }
+      50% { border-color: rgba(255, 170, 175, 1); }
+    }
+
+    .station-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(132, 188, 255, 0.2);
+    }
+
+    .station-name {
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .station-status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse-indicator 2s ease-in-out infinite;
+    }
+
+    .station[data-type="source"] .station-status-indicator { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+    .station[data-type="inspection"] .station-status-indicator { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .station[data-type="repair"] .station-status-indicator { background: var(--red); box-shadow: 0 0 8px var(--red); }
+    .station[data-type="output"] .station-status-indicator { background: var(--green); box-shadow: 0 0 8px var(--green); }
+
+    @keyframes pulse-indicator {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .station-metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 8px;
+      margin-bottom: 10px;
+      font-size: 0.7rem;
+    }
+
+    .metric {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .metric-value {
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .inspection-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 8px;
+      margin-bottom: 10px;
+      font-size: 0.7rem;
+    }
+
+    .inspection-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .inspection-stat-label {
+      color: var(--muted);
+      font-size: 0.62rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .inspection-stat-value {
+      color: var(--text);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .station[data-type="inspection"] .inspection-stat-value.pass { color: var(--green); }
+    .station[data-type="inspection"] .inspection-stat-value.fail { color: var(--red); }
+    .station[data-type="inspection"] .inspection-stat-value.critical-fail { color: #ff4444; font-weight: 900; text-shadow: 0 0 10px rgba(255, 68, 68, 0.8); animation: critical-fail-pulse 0.6s ease-in-out infinite; }
+
+    @keyframes critical-fail-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .utilization-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .utilization-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--blue));
+      border-radius: 999px;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 10px rgba(69, 209, 255, 0.6);
+    }
+
+    .utilization-fill.warning { background: linear-gradient(90deg, var(--amber), var(--red)); box-shadow: 0 0 10px rgba(255, 191, 71, 0.8); }
+
+    .unit-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 20px;
+      border-radius: 999px;
+      padding: 0 6px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #081a29;
+      background: linear-gradient(135deg, #b6eaff, #62d0ff);
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 2px 8px rgba(53, 147, 255, 0.4);
+    }
+
+    .flow-connector {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: 40px;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(69, 209, 255, 0.8), transparent);
+      z-index: 1;
+      animation: flow-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes flow-pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .flow-label {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem;
+      color: var(--cyan);
+      font-weight: 700;
+      white-space: nowrap;
+      text-shadow: 0 0 10px rgba(69, 209, 255, 0.4);
+    }
+
+    .production-river {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .river-line {
+      stroke: rgba(69, 209, 255, 0.2);
+      stroke-width: 2;
+      fill: none;
+      filter: drop-shadow(0 0 6px rgba(69, 209, 255, 0.3));
+    }
+
+    .river-flow {
+      stroke: rgba(69, 209, 255, 0.6);
+      stroke-width: 3;
+      fill: none;
+      filter: drop-shadow(0 0 8px rgba(69, 209, 255, 0.6));
+      stroke-dasharray: 10, 5;
+      stroke-linecap: round;
+      animation: river-flow 3s linear infinite;
+    }
+
+    @keyframes river-flow {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 15; }
+    }
+
+    .flow-particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--cyan), rgba(69, 209, 255, 0.3));
+      box-shadow: 0 0 6px var(--cyan);
+      pointer-events: none;
+    }
+
+    .flow-particle-fast {
+      animation: float-right 2s linear infinite;
+    }
+
+    @keyframes float-right {
+      0% {
+        opacity: 0;
+        transform: translateX(-100px);
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+    }
+
+    .flow-particles-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Sankey Visualization */
+    .sankey-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    .sankey-flow {
+      stroke: rgba(69, 209, 255, 0.5);
+      stroke-width: 2;
+      fill: none;
+      filter: drop-shadow(0 0 4px rgba(69, 209, 255, 0.3));
+    }
+
+    .sankey-flow-high {
+      stroke: rgba(74, 229, 165, 0.6);
+      stroke-width: 4;
+      filter: drop-shadow(0 0 6px rgba(74, 229, 165, 0.5));
+    }
+
+    .sankey-flow-critical {
+      stroke: rgba(255, 111, 122, 0.7);
+      stroke-width: 5;
+      filter: drop-shadow(0 0 8px rgba(255, 111, 122, 0.6));
+      animation: critical-flow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes critical-flow {
+      0%, 100% { opacity: 0.7; stroke-width: 5; }
+      50% { opacity: 1; stroke-width: 6; }
+    }
+
+    .flow-throughput-label {
+      position: absolute;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-shadow: 0 0 10px rgba(69, 209, 255, 0.6);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* Animated Flow Particles */
+    .animated-particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .particle-cyan {
+      background: radial-gradient(circle, var(--cyan), rgba(69, 209, 255, 0.3));
+      box-shadow: 0 0 8px var(--cyan);
+    }
+
+    .particle-green {
+      background: radial-gradient(circle, var(--green), rgba(74, 229, 165, 0.3));
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .particle-red {
+      background: radial-gradient(circle, var(--red), rgba(255, 111, 122, 0.3));
+      box-shadow: 0 0 8px var(--red);
+    }
+
+    /* Production Timeline */
+    .production-timeline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(10, 20, 35, 0.6);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin-top: 8px;
+      font-size: 0.7rem;
+    }
+
+    .timeline-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.5; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .stream {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 18px 18px;
+      height: 100%;
+      min-height: 760px;
+    }
+
+    .event-feed {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: auto;
+    }
+
+    .event {
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.02);
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .event strong { color: var(--text); }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(74,229,165,0.12);
+      border: 1px solid rgba(74,229,165,0.35);
+      color: #bfffe0;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(74,229,165,0.9);
+    }
+
+    @media (max-width: 1200px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .board, .stream {
+        min-height: 620px;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌈 Hello World! 2 🌈</h1>
-        <div class="color-box">
-            <div class="box red">Red</div>
-            <div class="box orange">Orange</div>
-            <div class="box yellow">Yellow</div>
-            <div class="box green">Green</div>
-            <div class="box blue">Blue</div>
-            <div class="box purple">Purple</div>
-            <div class="box pink">Pink</div>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">FlexFlow Digital Twin</p>
+        <h1>Production Flow Board</h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="startBtn" class="primary">Start</button>
+        <button id="pauseBtn" class="secondary">Pause</button>
+        <button id="resetBtn" class="ghost">Reset</button>
+      </div>
+    </header>
+
+    <section class="kpis">
+      <div class="kpi">
+        <span class="label">Inbound</span>
+        <span class="value" id="inboundValue">0</span>
+      </div>
+      <div class="kpi">
+        <span class="label">In Process</span>
+        <span class="value" id="wipValue">0</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Completed</span>
+        <span class="value" id="completedValue">0</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Yield</span>
+        <span class="value" id="yieldValue">0%</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Repair Queue</span>
+        <span class="value" id="repairValue">0</span>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Station Setup</h2>
         </div>
-    </div>
+        <div class="panel-body">
+          <div class="global-config field">
+            <label for="inboundRateInput">Inbound rate (units/min)</label>
+            <input id="inboundRateInput" type="number" min="1" max="120" value="18" />
+          </div>
+          <div id="stationControls" class="station-controls"></div>
+        </div>
+      </aside>
+
+      <main class="panel board">
+        <div class="panel-header">
+          <h2 class="panel-title">Live Floor</h2>
+          <div class="live-pill"><span class="dot"></span> Live</div>
+        </div>
+        <div class="board-inner">
+          <div class="floor">
+            <div class="floor-grid"></div>
+            <svg class="sankey-container" id="sankeyContainer"></svg>
+            <svg class="production-river" id="productionRiver"></svg>
+            <div id="flowParticles" class="flow-particles-container"></div>
+            <div id="stationRow" class="station-row"></div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Production Feed</h2>
+        </div>
+        <div class="stream">
+          <ul id="eventFeed" class="event-feed"></ul>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const stationDefinitions = [
+      { id: 'receiving', name: 'Receiving', type: 'source', processing: 1.8, next: 'cutting' },
+      { id: 'cutting', name: 'Cutting', type: 'process', processing: 4.2, next: 'assembly' },
+      { id: 'assembly', name: 'Assembly', type: 'process', processing: 5.5, next: 'inspection' },
+      { id: 'inspection', name: 'Inspection', type: 'inspection', processing: 2.6, failRate: 18, next: 'packing', repairTarget: 'repair' },
+      { id: 'repair', name: 'Repair', type: 'repair', processing: 6.2, next: 'inspection' },
+      { id: 'packing', name: 'Packing', type: 'process', processing: 3.1, next: 'shipping' },
+      { id: 'shipping', name: 'Shipping', type: 'output', processing: 1.6 }
+    ];
+
+    const state = {
+      running: true,
+      lastTs: 0,
+      units: [],
+      currentId: 0,
+      inboundRate: 18,
+      totalIn: 0,
+      totalCompleted: 0,
+      failedCount: 0,
+      repairQueue: 0,
+      spawnAccumulator: 0,
+      eventLog: []
+    };
+
+    const stationState = {};
+    const stationMap = {};
+
+    function createStationState() {
+      stationDefinitions.forEach((station) => {
+        stationState[station.id] = { queue: [], active: null, activeElapsed: 0 };
+        stationMap[station.id] = station;
+      });
+    }
+
+    function renderProductionRiver() {
+      const svg = document.getElementById('productionRiver');
+      if (!svg.querySelector('path')) {
+        const stations = document.querySelectorAll('.station');
+        let pathD = '';
+
+        Array.from(stations).forEach((station, idx) => {
+          const rect = station.getBoundingClientRect();
+          const parentRect = svg.parentElement.getBoundingClientRect();
+          
+          const x = rect.left - parentRect.left + rect.width / 2;
+          const y = rect.top - parentRect.top + rect.height / 2;
+
+          if (idx === 0) {
+            pathD += `M ${x} ${y}`;
+          } else {
+            pathD += ` Q ${x - 40} ${y} ${x} ${y}`;
+          }
+        });
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathD);
+        path.setAttribute('class', 'river-flow');
+        svg.appendChild(path);
+
+        // Add secondary connectors for repair loop
+        const inspectionStation = document.querySelector('[id*="inspection"]');
+        const repairStation = document.querySelector('[id*="repair"]');
+        
+        if (inspectionStation && repairStation) {
+          const inspRect = inspectionStation.getBoundingClientRect();
+          const repairRect = repairStation.getBoundingClientRect();
+          
+          const inspX = inspRect.left - parentRect.left + inspRect.width / 2;
+          const inspY = inspRect.top - parentRect.top + inspRect.height / 2;
+          const repairX = repairRect.left - parentRect.left + repairRect.width / 2;
+          const repairY = repairRect.top - parentRect.top + repairRect.height / 2;
+
+          const repairPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          repairPath.setAttribute('d', `M ${inspX} ${inspY + 80} L ${inspX} ${repairY + 80} L ${repairX} ${repairY + 80}`);
+          repairPath.setAttribute('class', 'river-flow');
+          repairPath.style.stroke = 'rgba(255, 111, 122, 0.5)';
+          repairPath.style.filter = 'drop-shadow(0 0 8px rgba(255, 111, 122, 0.4))';
+          svg.appendChild(repairPath);
+        }
+      }
+    }
+
+    function renderSankeyVisualization() {
+      const svg = document.getElementById('sankeyContainer');
+      svg.innerHTML = ''; // Clear previous paths
+      
+      // Clear previous labels
+      const oldLabels = document.querySelectorAll('.flow-throughput-label');
+      oldLabels.forEach(label => label.remove());
+      
+      const stations = document.querySelectorAll('.station');
+      const parentRect = svg.parentElement.getBoundingClientRect();
+      
+      // Draw Sankey paths between stations
+      for (let i = 0; i < stations.length - 1; i++) {
+        const currentStation = stations[i];
+        const nextStation = stations[i + 1];
+        const currentId = currentStation.id.replace('station-', '');
+        const nextId = nextStation.id.replace('station-', '');
+        
+        const currentItem = stationState[currentId];
+        const nextItem = stationState[nextId];
+        
+        const currentRect = currentStation.getBoundingClientRect();
+        const nextRect = nextStation.getBoundingClientRect();
+        
+        const x1 = currentRect.left - parentRect.left + currentRect.width / 2;
+        const y1 = currentRect.top - parentRect.top + currentRect.height / 2;
+        const x2 = nextRect.left - parentRect.left + nextRect.width / 2;
+        const y2 = nextRect.top - parentRect.top + nextRect.height / 2;
+        
+        const flowVolume = (nextItem.input || 0);
+        const isCritical = flowVolume > 15;
+        const isHighFlow = flowVolume > 10;
+        
+        // Main flow path
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const pathD = `M ${x1} ${y1} Q ${(x1 + x2) / 2} ${(y1 + y2) / 2 - 20} ${x2} ${y2}`;
+        path.setAttribute('d', pathD);
+        
+        if (isCritical) {
+          path.setAttribute('class', 'sankey-flow sankey-flow-critical');
+        } else if (isHighFlow) {
+          path.setAttribute('class', 'sankey-flow sankey-flow-high');
+        } else {
+          path.setAttribute('class', 'sankey-flow');
+        }
+        
+        svg.appendChild(path);
+        
+        // Add throughput label
+        const label = document.createElement('div');
+        label.className = 'flow-throughput-label';
+        label.textContent = `${flowVolume}`;
+        label.style.left = ((x1 + x2) / 2 - 15) + 'px';
+        label.style.top = ((y1 + y2) / 2 - 50) + 'px';
+        label.style.color = isCritical ? 'var(--red)' : isHighFlow ? 'var(--green)' : 'var(--cyan)';
+        label.style.fontSize = isCritical ? '0.75rem' : '0.65rem';
+        label.style.fontWeight = isCritical ? '900' : '700';
+        svg.parentElement.appendChild(label);
+      }
+      
+      // Handle repair loop
+      const inspectionStation = document.querySelector('[id*="inspection"]');
+      const repairStation = document.querySelector('[id*="repair"]');
+      
+      if (inspectionStation && repairStation) {
+        const inspRect = inspectionStation.getBoundingClientRect();
+        const repairRect = repairStation.getBoundingClientRect();
+        
+        const inspX = inspRect.left - parentRect.left + inspRect.width / 2;
+        const inspY = inspRect.top - parentRect.top + inspRect.height / 2;
+        const repairX = repairRect.left - parentRect.left + repairRect.width / 2;
+        const repairY = repairRect.top - parentRect.top + repairRect.height / 2;
+        
+        const repairFlow = stationState.repair.input || 0;
+        
+        const repairPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const repairPathD = `M ${inspX} ${inspY + 80} Q ${inspX - 60} ${(inspY + repairY) / 2} ${repairX} ${repairY + 80}`;
+        repairPath.setAttribute('d', repairPathD);
+        repairPath.setAttribute('class', repairFlow > 5 ? 'sankey-flow sankey-flow-critical' : 'sankey-flow');
+        repairPath.style.stroke = 'rgba(255, 111, 122, 0.6)';
+        svg.appendChild(repairPath);
+        
+        // Add repair loop label
+        const repairLabel = document.createElement('div');
+        repairLabel.className = 'flow-throughput-label';
+        repairLabel.textContent = `${repairFlow}`;
+        repairLabel.style.left = ((inspX + repairX) / 2 - 70) + 'px';
+        repairLabel.style.top = ((inspY + repairY) / 2 + 20) + 'px';
+        repairLabel.style.color = repairFlow > 5 ? 'var(--red)' : 'var(--amber)';
+        svg.parentElement.appendChild(repairLabel);
+      }
+    }
+
+    function createFlowParticle(startX, startY, delay = 0) {
+      const container = document.getElementById('flowParticles');
+      const particle = document.createElement('div');
+      particle.className = 'flow-particle flow-particle-fast';
+      particle.style.left = startX + 'px';
+      particle.style.top = startY + 'px';
+      particle.style.animationDelay = delay + 's';
+      container.appendChild(particle);
+
+      setTimeout(() => particle.remove(), 2000 + delay * 1000);
+    }
+
+    function generateFlowParticles() {
+      const stations = document.querySelectorAll('.station');
+      
+      stations.forEach((station, idx) => {
+        if (idx < stations.length - 1) {
+          const rect = station.getBoundingClientRect();
+          const parentRect = rect.parentElement ? rect.parentElement.getBoundingClientRect() : { left: 0, top: 0 };
+          
+          const startX = rect.left - parentRect.left + rect.width / 2;
+          const startY = rect.top - parentRect.top + rect.height / 2;
+          
+          // Random particle generation based on flow
+          if (Math.random() > 0.7) {
+            createFlowParticle(startX, startY, Math.random() * 0.5);
+          }
+        }
+      });
+    }
+
+    function addEvent(message) {
+      const stamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      state.eventLog.unshift({ time: stamp, text: message });
+      if (state.eventLog.length > 12) state.eventLog.pop();
+      renderEvents();
+    }
+
+    function renderEvents() {
+      const feed = document.getElementById('eventFeed');
+      feed.innerHTML = state.eventLog.map((event) => `
+        <li class="event"><strong>${event.time}</strong> — ${event.text}</li>
+      `).join('');
+    }
+
+    function syncGlobalInput() {
+      document.getElementById('inboundRateInput').value = state.inboundRate;
+    }
+
+    function renderStationControls() {
+      const controls = document.getElementById('stationControls');
+      controls.innerHTML = stationDefinitions.map((station) => {
+        const failField = station.type === 'inspection'
+          ? `<div class="field small"><label>Failure rate (%)</label><input data-station-field="failRate" data-station-id="${station.id}" type="number" min="0" max="100" value="${station.failRate || 0}" /></div>`
+          : '';
+
+        return `
+          <div class="station-config-card">
+            <div class="station-head">
+              <strong>${station.name}</strong>
+              <span class="tag ${station.type}">${station.type}</span>
+            </div>
+            <div class="field small">
+              <label>Processing time (s)</label>
+              <input data-station-field="processing" data-station-id="${station.id}" type="number" min="0.5" max="30" step="0.1" value="${station.processing}" />
+            </div>
+            ${failField}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function calculateStationMetrics(station, stationItem) {
+      const totalProcessed = stationItem.processed || 0;
+      const totalPassed = stationItem.passed || 0;
+      const totalFailed = stationItem.failed || 0;
+      const input = stationItem.input || 0;
+      const output = stationItem.output || 0;
+      const wip = stationItem.queue.length + (stationItem.active ? 1 : 0);
+      const utilization = totalProcessed > 0 ? Math.min(100, (wip / 5) * 100) : 0;
+      const yieldPercent = totalProcessed > 0 ? ((totalPassed / totalProcessed) * 100).toFixed(0) : 0;
+      const failureRate = totalProcessed > 0 ? ((totalFailed / totalProcessed) * 100).toFixed(1) : 0;
+
+      return { input, output, wip, utilization, yieldPercent, failureRate };
+    }
+
+    function renderStations() {
+      const row = document.getElementById('stationRow');
+      let html = '';
+
+      stationDefinitions.forEach((station, idx) => {
+        const stationItem = stationState[station.id];
+        const metrics = calculateStationMetrics(station, stationItem);
+        
+        let bottleneckClass = '';
+        let stationHtml = '';
+
+        if (station.type === 'inspection') {
+          const passCount = stationItem.passed || 0;
+          const failCount = stationItem.failed || 0;
+          const failRate = (stationItem.processed || 0) > 0 
+            ? ((failCount / (stationItem.processed || 1)) * 100).toFixed(0)
+            : 0;
+          const isCriticalFailure = failRate >= 10;
+          const failClassStyle = isCriticalFailure ? 'critical-fail' : '';
+          
+          // Apply bottleneck styling only to inspection station based on failure rate
+          if (failRate >= 10) {
+            bottleneckClass = 'critical-bottleneck';
+          } else if (failRate >= 5) {
+            bottleneckClass = 'bottleneck';
+          }
+          
+          stationHtml = `
+            <div id="station-${station.id}" class="station ${bottleneckClass}" data-type="${station.type}">
+              <div class="station-header">
+                <div class="station-name">${station.name}</div>
+                <div class="station-status-indicator"></div>
+              </div>
+            <div class="inspection-details">
+              <div class="inspection-stat">
+                <div class="inspection-stat-label">Pass</div>
+                <div class="inspection-stat-value pass">${passCount}</div>
+              </div>
+              <div class="inspection-stat">
+                <div class="inspection-stat-label">Fail</div>
+                <div class="inspection-stat-value fail">${failCount}</div>
+              </div>
+              <div class="inspection-stat" style="grid-column: 1 / -1;">
+                <div class="inspection-stat-label">Failure Rate</div>
+                <div class="inspection-stat-value ${failClassStyle}">${failRate}%</div>
+              </div>
+            </div>
+          `;
+        } else {
+          stationHtml = `
+            <div id="station-${station.id}" class="station" data-type="${station.type}">
+              <div class="station-header">
+                <div class="station-name">${station.name}</div>
+                <div class="station-status-indicator"></div>
+              </div>
+            <div class="station-metrics">
+              <div class="metric">
+                <div class="metric-label">Input</div>
+                <div class="metric-value">${metrics.input}</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Output</div>
+                <div class="metric-value">${metrics.output}</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">WIP</div>
+                <div class="metric-value">${metrics.wip}</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Cycle (s)</div>
+                <div class="metric-value">${station.processing.toFixed(1)}</div>
+              </div>
+            </div>
+            <div class="utilization-bar">
+              <div class="utilization-fill ${metrics.utilization > 70 ? 'warning' : ''}" style="width: ${metrics.utilization}%"></div>
+            </div>
+            <div class="station-metrics" style="margin-bottom: 0;">
+              <div class="metric">
+                <div class="metric-label">Util %</div>
+                <div class="metric-value">${metrics.utilization.toFixed(0)}%</div>
+              </div>
+              <div class="metric">
+                <div class="metric-label">Yield %</div>
+                <div class="metric-value">${metrics.yieldPercent}%</div>
+              </div>
+            </div>
+          `;
+        }
+
+        stationHtml += `</div>`;
+
+        // Add flow connector
+        if (idx < stationDefinitions.length - 1) {
+          const nextStationItem = stationState[stationDefinitions[idx + 1].id];
+          const flowVolume = stationItem.output - (stationItem.lastConnectorOutput || 0);
+          stationItem.lastConnectorOutput = stationItem.output || 0;
+
+          stationHtml += `
+            <div class="flow-connector">
+              <div class="flow-label">${Math.max(0, flowVolume)}</div>
+            </div>
+          `;
+        }
+
+        html += stationHtml;
+      });
+
+      row.innerHTML = html;
+    }
+
+    function getUnitColor(unit) {
+      if (unit.status === 'failed') return 'linear-gradient(135deg, #ffc4c8, #ff8d96)';
+      if (unit.status === 'repaired') return 'linear-gradient(135deg, #ffe7b5, #ffcd65)';
+      return 'linear-gradient(135deg, #b6eaff, #62d0ff)';
+    }
+
+    function createUnit() {
+      const unit = {
+        id: `U-${++state.currentId}`,
+        label: state.currentId,
+        status: 'active',
+        routeCount: 0,
+        currentStation: 'receiving',
+        movingTo: null,
+        fromStation: null,
+        progress: 0,
+        processElapsed: 0,
+        failed: false,
+        repaired: false,
+        initialColor: `hsl(${(state.currentId * 27) % 360} 85% 68%)`
+      };
+      stationState.receiving.queue.push(unit);
+      stationState.receiving.input = (stationState.receiving.input || 0) + 1;
+      state.totalIn += 1;
+      addEvent(`Unit ${unit.id} entered receiving queue.`);
+      return unit;
+    }
+
+    function updateKpis() {
+      const totalUnits = state.units.length;
+      const inProcess = Object.values(stationState).reduce((sum, st) => sum + st.queue.length + (st.active ? 1 : 0), 0);
+      const completed = state.totalCompleted;
+      const yield = state.totalIn ? ((completed / state.totalIn) * 100).toFixed(1) : 0;
+      document.getElementById('inboundValue').textContent = state.totalIn;
+      document.getElementById('wipValue').textContent = inProcess;
+      document.getElementById('completedValue').textContent = completed;
+      document.getElementById('yieldValue').textContent = `${yield}%`;
+      document.getElementById('repairValue').textContent = state.repairQueue;
+    }
+
+    function startProcessingIfAvailable(station) {
+      const stationItem = stationState[station.id];
+      if (stationItem.active || stationItem.queue.length === 0) return;
+
+      const unit = stationItem.queue.shift();
+      stationItem.active = unit;
+      unit.currentStation = station.id;
+      unit.processElapsed = 0;
+      unit.status = station.type === 'inspection' ? 'inspection' : 'active';
+      if (station.type === 'inspection') {
+        unit.failed = false;
+        unit.repaired = false;
+      }
+    }
+
+    function finishStation(stationId) {
+      const station = stationMap[stationId];
+      const stationItem = stationState[stationId];
+      const unit = stationItem.active;
+      if (!unit) return;
+
+      stationItem.active = null;
+      unit.processElapsed = 0;
+      stationItem.processed = (stationItem.processed || 0) + 1;
+
+      if (station.type === 'inspection') {
+        const failRoll = Math.random() * 100;
+        if (failRoll < (station.failRate || 0)) {
+          unit.failed = true;
+          unit.status = 'failed';
+          stationItem.failed = (stationItem.failed || 0) + 1;
+          state.failedCount += 1;
+          stationState.repair.queue.push(unit);
+          stationState.repair.input = (stationState.repair.input || 0) + 1;
+          state.repairQueue = stationState.repair.queue.length;
+          addEvent(`${unit.id} failed inspection and was routed to repair.`);
+          
+          // Check if failure rate has reached critical threshold
+          const failureRate = ((stationItem.failed / stationItem.processed) * 100);
+          if (failureRate >= 10 && failureRate - ((stationItem.failed - 1) / (stationItem.processed - 1)) * 100 >= 10) {
+            addEvent(`⚠️ CRITICAL: ${station.name} failure rate reached ${failureRate.toFixed(1)}%`);
+          }
+          return;
+        }
+        unit.status = 'passed';
+        stationItem.passed = (stationItem.passed || 0) + 1;
+        stationItem.output = (stationItem.output || 0) + 1;
+        addEvent(`${unit.id} passed ${station.name}.`);
+      } else if (station.type === 'repair') {
+        unit.status = 'repaired';
+        unit.repaired = true;
+        stationItem.output = (stationItem.output || 0) + 1;
+        state.repairQueue = Math.max(0, stationState.repair.queue.length - 1);
+      } else if (station.type === 'output') {
+        state.totalCompleted += 1;
+        stationItem.output = (stationItem.output || 0) + 1;
+        unit.status = 'complete';
+        addEvent(`${unit.id} completed shipping.`);
+        state.units = state.units.filter((item) => item.id !== unit.id);
+        updateKpis();
+        return;
+      } else {
+        stationItem.output = (stationItem.output || 0) + 1;
+      }
+
+      const nextStation = station.type === 'repair' ? 'inspection' : (station.next || null);
+      if (nextStation) {
+        const target = stationMap[nextStation];
+        if (target) {
+          unit.currentStation = nextStation;
+          stationState[nextStation].queue.push(unit);
+          stationState[nextStation].input = (stationState[nextStation].input || 0) + 1;
+          addEvent(`${unit.id} moved to ${target.name}.`);
+        }
+      }
+
+      if (station.type === 'inspection' && unit.failed) {
+        state.repairQueue = stationState.repair.queue.length;
+      }
+
+      updateKpis();
+    }
+
+    function advanceUnitFlow() {
+      Object.values(stationMap).forEach((station) => {
+        const stationItem = stationState[station.id];
+
+        if (stationItem.active) {
+          stationItem.active.processElapsed += 0.25;
+          if (stationItem.active.processElapsed >= station.processing) {
+            finishStation(station.id);
+          }
+        }
+
+        if (!stationItem.active && stationItem.queue.length > 0) {
+          startProcessingIfAvailable(station);
+        }
+      });
+
+      Object.keys(stationState).forEach((stationId) => {
+        const stationItem = stationState[stationId];
+        if (stationItem.active && stationItem.active.currentStation !== stationId) {
+          stationItem.active.currentStation = stationId;
+        }
+      });
+    }
+
+    function tick() {
+      if (!state.running) return;
+      state.spawnAccumulator += 0.25;
+      const spawnInterval = 60 / state.inboundRate;
+      if (state.spawnAccumulator >= spawnInterval) {
+        state.spawnAccumulator = 0;
+        const newUnit = createUnit();
+        state.units.push(newUnit);
+      }
+
+      advanceUnitFlow();
+      renderStations();
+      renderProductionRiver();
+      renderSankeyVisualization();
+      generateFlowParticles();
+      updateKpis();
+    }
+
+    function bindEvents() {
+      document.getElementById('startBtn').addEventListener('click', () => {
+        state.running = true;
+        addEvent('Production cycle resumed.');
+      });
+
+      document.getElementById('pauseBtn').addEventListener('click', () => {
+        state.running = false;
+        addEvent('Production cycle paused.');
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        state.running = false;
+        state.units = [];
+        state.totalIn = 0;
+        state.totalCompleted = 0;
+        state.failedCount = 0;
+        state.repairQueue = 0;
+        state.spawnAccumulator = 0;
+        state.eventLog = [];
+        Object.keys(stationState).forEach((id) => {
+          stationState[id].queue = [];
+          stationState[id].active = null;
+          stationState[id].activeElapsed = 0;
+          stationState[id].input = 0;
+          stationState[id].output = 0;
+          stationState[id].processed = 0;
+          stationState[id].passed = 0;
+          stationState[id].failed = 0;
+          stationState[id].lastConnectorOutput = 0;
+        });
+        addEvent('Factory floor reset complete.');
+        updateKpis();
+        renderStations();
+      });
+
+      document.getElementById('inboundRateInput').addEventListener('input', (event) => {
+        const value = Number(event.target.value) || 18;
+        state.inboundRate = Math.max(1, Math.min(120, value));
+        addEvent(`Inbound rate updated to ${state.inboundRate} units/min.`);
+      });
+
+      document.addEventListener('input', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const stationId = target.dataset.stationId;
+        const field = target.dataset.stationField;
+        if (!stationId || !field) return;
+
+        const station = stationMap[stationId];
+        const value = Number(target.value);
+        if (!station || Number.isNaN(value)) return;
+
+        if (field === 'processing') {
+          station.processing = Math.max(0.5, value);
+          addEvent(`${station.name} process time updated to ${station.processing}s.`);
+        }
+
+        if (field === 'failRate') {
+          station.failRate = Math.max(0, Math.min(100, value));
+          addEvent(`${station.name} failure rate updated to ${station.failRate}%.`);
+        }
+
+        renderStations();
+      });
+    }
+
+    function init() {
+      createStationState();
+      renderStationControls();
+      renderStations();
+      renderEvents();
+      syncGlobalInput();
+      bindEvents();
+      
+      setTimeout(() => {
+        renderProductionRiver();
+        renderSankeyVisualization();
+      }, 200);
+      
+      state.units.push(createUnit());
+      stationState.receiving.queue.push(createUnit());
+      renderStations();
+      updateKpis();
+      setInterval(tick, 250);
+    }
+
+    init();
+  </script>
 </body>
 </html>
 
