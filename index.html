@@ -1,77 +1,958 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin: 0;
-            padding: 20px;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            text-align: center;
-        }
-        
-        h1 {
-            color: #667eea;
-            font-size: 3em;
-            margin: 0 0 20px 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .color-box {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        
-        .box {
-            width: 80px;
-            height: 80px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 0.9em;
-        }
-        
-        .red { background-color: #ff6b6b; }
-        .orange { background-color: #ffa500; }
-        .yellow { background-color: #ffd93d; color: #333; }
-        .green { background-color: #6bcf7f; }
-        .blue { background-color: #4ecdc4; }
-        .purple { background-color: #a78bfa; }
-        .pink { background-color: #ff69b4; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlexFlow Production Floor</title>
+  <style>
+    :root {
+      --bg: #071521;
+      --bg-2: #0d1d2d;
+      --panel: rgba(14, 27, 40, 0.92);
+      --panel-2: rgba(18, 35, 53, 0.78);
+      --card: rgba(18, 48, 67, 0.9);
+      --line: rgba(132, 188, 255, 0.25);
+      --line-strong: rgba(92, 194, 255, 0.6);
+      --text: #edf7ff;
+      --muted: #9bc2dd;
+      --cyan: #45d1ff;
+      --blue: #4a8dff;
+      --green: #4ae5a5;
+      --amber: #ffbf47;
+      --red: #ff6f7a;
+      --purple: #b88cff;
+      --shadow: 0 18px 40px rgba(2, 11, 20, 0.5);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(64, 138, 255, 0.22), transparent 30%),
+        linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+      color: var(--text);
+    }
+
+    body {
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 18px;
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: rgba(7, 21, 33, 0.7);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px 0;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 2vw, 2.8rem);
+      letter-spacing: 0.02em;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary { background: linear-gradient(135deg, var(--cyan), var(--blue)); color: #03131d; }
+    .secondary { background: rgba(255,255,255,0.06); border: 1px solid var(--line); color: var(--text); }
+    .ghost { background: rgba(255, 191, 71, 0.12); color: #ffd37d; border: 1px solid rgba(255, 191, 71, 0.32); }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .kpi {
+      background: rgba(10, 22, 32, 0.78);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 16px 18px;
+    }
+
+    .kpi .label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .kpi .value {
+      font-size: clamp(1.5rem, 2vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr) 300px;
+      gap: 18px;
+    }
+
+    .panel {
+      background: rgba(10, 22, 32, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,0.012);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .panel-body {
+      padding: 16px 18px 18px;
+    }
+
+    .global-config { margin-bottom: 14px; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+
+    .station-controls {
+      display: grid;
+      gap: 12px;
+    }
+
+    .station-config-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(11, 30, 42, 0.8);
+      padding: 12px 12px 8px;
+    }
+
+    .station-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .station-head strong {
+      font-size: 1rem;
+    }
+
+    .tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.63rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.15);
+      opacity: 0.9;
+    }
+
+    .tag.process { background: rgba(74,141,255,0.18); color: #a9d2ff; }
+    .tag.inspection { background: rgba(255,191,71,0.18); color: #ffd98b; }
+    .tag.repair { background: rgba(255,111,122,0.18); color: #ffb7bf; }
+    .tag.output { background: rgba(74,229,165,0.18); color: #a9f5d2; }
+
+    .field.small {
+      margin-bottom: 8px;
+    }
+
+    .board {
+      position: relative;
+      min-height: 760px;
+      overflow: hidden;
+    }
+
+    .board-inner {
+      position: relative;
+      padding: 18px 18px 14px;
+      height: 100%;
+      min-height: 760px;
+    }
+
+    .floor {
+      position: relative;
+      height: 680px;
+      background:
+        linear-gradient(rgba(86, 158, 255, 0.06), rgba(86,158,255,0.06)),
+        linear-gradient(180deg, rgba(8,17,24,0.9), rgba(11,31,46,0.9));
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .floor-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+
+    .station-row {
+      position: absolute;
+      left: 40px;
+      right: 40px;
+      top: 40px;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(150px, 1fr));
+      gap: 14px;
+    }
+
+    .station {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 170px;
+      border-radius: 18px;
+      border: 1px solid var(--line-strong);
+      background: linear-gradient(180deg, rgba(18, 45, 66, 0.9), rgba(10, 25, 40, 0.95));
+      padding: 12px 10px 10px;
+      box-shadow: inset 0 0 0 1px rgba(110, 201, 255, 0.08), 0 10px 30px rgba(3, 15, 23, 0.4);
+    }
+
+    .station[data-type="source"] { border-color: rgba(69, 209, 255, 0.7); }
+    .station[data-type="inspection"] { border-color: rgba(255, 191, 71, 0.85); }
+    .station[data-type="repair"] { border-color: rgba(255, 111, 122, 0.8); }
+    .station[data-type="output"] { border-color: rgba(74,229,165,0.85); }
+
+    .station-headline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .station-name {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      color: var(--text);
+      margin-top: 4px;
+    }
+
+    .station-metrics {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .station-time {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .station-badge {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 4px 7px;
+    }
+
+    .queue {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 38px;
+      margin-top: 10px;
+    }
+
+    .unit-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 22px;
+      border-radius: 999px;
+      padding: 0 8px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #081a29;
+      background: linear-gradient(135deg, #b6eaff, #62d0ff);
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 4px 14px rgba(53, 147, 255, 0.25);
+    }
+
+    .station[data-type="repair"] .unit-chip { background: linear-gradient(135deg, #ffc4c8, #ff8d96); }
+    .station[data-type="inspection"] .unit-chip { background: linear-gradient(135deg, #ffe7b5, #ffcd65); }
+    .station[data-type="output"] .unit-chip { background: linear-gradient(135deg, #bff7d6, #6fe6b2); }
+
+    .station[data-type="source"] .unit-chip { background: linear-gradient(135deg, #d8efff, #7ad3ff); }
+
+    .active-unit {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      min-height: 30px;
+      align-items: center;
+    }
+
+    .plus {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+    }
+
+    .unit-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .unit {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.85);
+      box-shadow: 0 10px 18px rgba(91, 186, 255, 0.42);
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.58rem;
+      font-weight: 900;
+      color: #071521;
+      overflow: hidden;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .unit.failed { box-shadow: 0 10px 18px rgba(255, 111, 122, 0.44); }
+    .unit.repair { box-shadow: 0 10px 18px rgba(255,191,71,0.44); }
+
+    .stream {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px 18px 18px;
+      height: 100%;
+      min-height: 760px;
+    }
+
+    .event-feed {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: auto;
+    }
+
+    .event {
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.02);
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .event strong { color: var(--text); }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(74,229,165,0.12);
+      border: 1px solid rgba(74,229,165,0.35);
+      color: #bfffe0;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(74,229,165,0.9);
+    }
+
+    @media (max-width: 1200px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .board, .stream {
+        min-height: 620px;
+      }
+
+      .kpis {
+        grid-template-columns: repeat(2, minmax(150px, 1fr));
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌈 Hello World! 2 🌈</h1>
-        <div class="color-box">
-            <div class="box red">Red</div>
-            <div class="box orange">Orange</div>
-            <div class="box yellow">Yellow</div>
-            <div class="box green">Green</div>
-            <div class="box blue">Blue</div>
-            <div class="box purple">Purple</div>
-            <div class="box pink">Pink</div>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">FlexFlow Digital Twin</p>
+        <h1>Production Flow Board</h1>
+      </div>
+      <div class="topbar-actions">
+        <button id="startBtn" class="primary">Start</button>
+        <button id="pauseBtn" class="secondary">Pause</button>
+        <button id="resetBtn" class="ghost">Reset</button>
+      </div>
+    </header>
+
+    <section class="kpis">
+      <div class="kpi">
+        <span class="label">Inbound</span>
+        <span class="value" id="inboundValue">0</span>
+      </div>
+      <div class="kpi">
+        <span class="label">In Process</span>
+        <span class="value" id="wipValue">0</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Completed</span>
+        <span class="value" id="completedValue">0</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Yield</span>
+        <span class="value" id="yieldValue">0%</span>
+      </div>
+      <div class="kpi">
+        <span class="label">Repair Queue</span>
+        <span class="value" id="repairValue">0</span>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Station Setup</h2>
         </div>
-    </div>
+        <div class="panel-body">
+          <div class="global-config field">
+            <label for="inboundRateInput">Inbound rate (units/min)</label>
+            <input id="inboundRateInput" type="number" min="1" max="120" value="18" />
+          </div>
+          <div id="stationControls" class="station-controls"></div>
+        </div>
+      </aside>
+
+      <main class="panel board">
+        <div class="panel-header">
+          <h2 class="panel-title">Live Floor</h2>
+          <div class="live-pill"><span class="dot"></span> Live</div>
+        </div>
+        <div class="board-inner">
+          <div class="floor">
+            <div class="floor-grid"></div>
+            <div id="stationRow" class="station-row"></div>
+            <div id="unitLayer" class="unit-layer"></div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="panel">
+        <div class="panel-header">
+          <h2 class="panel-title">Production Feed</h2>
+        </div>
+        <div class="stream">
+          <ul id="eventFeed" class="event-feed"></ul>
+        </div>
+      </aside>
+    </section>
+  </div>
+
+  <script>
+    const stationDefinitions = [
+      { id: 'receiving', name: 'Receiving', type: 'source', processing: 1.8, next: 'cutting' },
+      { id: 'cutting', name: 'Cutting', type: 'process', processing: 4.2, next: 'assembly' },
+      { id: 'assembly', name: 'Assembly', type: 'process', processing: 5.5, next: 'inspection' },
+      { id: 'inspection', name: 'Inspection', type: 'inspection', processing: 2.6, failRate: 18, next: 'packing', repairTarget: 'repair' },
+      { id: 'repair', name: 'Repair', type: 'repair', processing: 6.2, next: 'inspection' },
+      { id: 'packing', name: 'Packing', type: 'process', processing: 3.1, next: 'shipping' },
+      { id: 'shipping', name: 'Shipping', type: 'output', processing: 1.6 }
+    ];
+
+    const state = {
+      running: true,
+      lastTs: 0,
+      units: [],
+      currentId: 0,
+      inboundRate: 18,
+      totalIn: 0,
+      totalCompleted: 0,
+      failedCount: 0,
+      repairQueue: 0,
+      spawnAccumulator: 0,
+      eventLog: []
+    };
+
+    const stationState = {};
+    const stationMap = {};
+    const unitDisplayMap = new Map();
+
+    function createStationState() {
+      stationDefinitions.forEach((station) => {
+        stationState[station.id] = { queue: [], active: null, activeElapsed: 0 };
+        stationMap[station.id] = station;
+      });
+    }
+
+    function addEvent(message) {
+      const stamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      state.eventLog.unshift({ time: stamp, text: message });
+      if (state.eventLog.length > 12) state.eventLog.pop();
+      renderEvents();
+    }
+
+    function renderEvents() {
+      const feed = document.getElementById('eventFeed');
+      feed.innerHTML = state.eventLog.map((event) => `
+        <li class="event"><strong>${event.time}</strong> — ${event.text}</li>
+      `).join('');
+    }
+
+    function syncGlobalInput() {
+      document.getElementById('inboundRateInput').value = state.inboundRate;
+    }
+
+    function renderStationControls() {
+      const controls = document.getElementById('stationControls');
+      controls.innerHTML = stationDefinitions.map((station) => {
+        const failField = station.type === 'inspection'
+          ? `<div class="field small"><label>Failure rate (%)</label><input data-station-field="failRate" data-station-id="${station.id}" type="number" min="0" max="100" value="${station.failRate || 0}" /></div>`
+          : '';
+
+        return `
+          <div class="station-config-card">
+            <div class="station-head">
+              <strong>${station.name}</strong>
+              <span class="tag ${station.type}">${station.type}</span>
+            </div>
+            <div class="field small">
+              <label>Processing time (s)</label>
+              <input data-station-field="processing" data-station-id="${station.id}" type="number" min="0.5" max="30" step="0.1" value="${station.processing}" />
+            </div>
+            ${failField}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderStations() {
+      const row = document.getElementById('stationRow');
+      row.innerHTML = stationDefinitions.map((station) => {
+        const stationItem = stationState[station.id];
+        const active = stationItem.active ? `
+          <div class="active-unit">
+            <div class="unit-chip" style="background: ${getUnitColor(stationItem.active)};">${stationItem.active.label}</div>
+          </div>
+        ` : '<div class="active-unit"></div>';
+
+        const queueUnits = stationItem.queue.slice(0, 4).map((unit) => `<div class="unit-chip" style="background: ${getUnitColor(unit)};">${unit.label}</div>`).join('');
+
+        return `
+          <div id="station-${station.id}" class="station" data-type="${station.type}">
+            <div>
+              <div class="station-headline">
+                <span>${station.type}</span>
+                <span class="station-badge">${stationItem.queue.length + (stationItem.active ? 1 : 0)}</span>
+              </div>
+              <div class="station-name">${station.name}</div>
+              <div class="station-metrics">
+                <span class="station-time">${station.processing}s</span>
+                <span class="station-badge">${station.failRate ? `${station.failRate}% fail` : 'stable'}</span>
+              </div>
+            </div>
+            <div class="queue">${queueUnits || '<span style="color: var(--muted); opacity: .7; font-size: .72rem;">Queue clear</span>'}</div>
+            ${active}
+            <div class="plus">+</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getUnitColor(unit) {
+      if (unit.status === 'failed') return 'linear-gradient(135deg, #ffc4c8, #ff8d96)';
+      if (unit.status === 'repaired') return 'linear-gradient(135deg, #ffe7b5, #ffcd65)';
+      return 'linear-gradient(135deg, #b6eaff, #62d0ff)';
+    }
+
+    function createUnit() {
+      const unit = {
+        id: `U-${++state.currentId}`,
+        label: state.currentId,
+        status: 'active',
+        routeCount: 0,
+        currentStation: 'receiving',
+        movingTo: null,
+        fromStation: null,
+        progress: 0,
+        processElapsed: 0,
+        failed: false,
+        repaired: false,
+        initialColor: `hsl(${(state.currentId * 27) % 360} 85% 68%)`
+      };
+      stationState.receiving.queue.push(unit);
+      state.totalIn += 1;
+      addEvent(`Unit ${unit.id} entered receiving queue.`);
+      return unit;
+    }
+
+    function updateKpis() {
+      const totalUnits = state.units.length;
+      const inProcess = Object.values(stationState).reduce((sum, st) => sum + st.queue.length + (st.active ? 1 : 0), 0);
+      const completed = state.totalCompleted;
+      const yield = state.totalIn ? ((completed / state.totalIn) * 100).toFixed(1) : 0;
+      document.getElementById('inboundValue').textContent = state.totalIn;
+      document.getElementById('wipValue').textContent = inProcess;
+      document.getElementById('completedValue').textContent = completed;
+      document.getElementById('yieldValue').textContent = `${yield}%`;
+      document.getElementById('repairValue').textContent = state.repairQueue;
+    }
+
+    function startProcessingIfAvailable(station) {
+      const stationItem = stationState[station.id];
+      if (stationItem.active || stationItem.queue.length === 0) return;
+
+      const unit = stationItem.queue.shift();
+      stationItem.active = unit;
+      unit.currentStation = station.id;
+      unit.processElapsed = 0;
+      unit.status = station.type === 'inspection' ? 'inspection' : 'active';
+      if (station.type === 'inspection') {
+        unit.failed = false;
+        unit.repaired = false;
+      }
+    }
+
+    function finishStation(stationId) {
+      const station = stationMap[stationId];
+      const stationItem = stationState[stationId];
+      const unit = stationItem.active;
+      if (!unit) return;
+
+      stationItem.active = null;
+      unit.processElapsed = 0;
+
+      if (station.type === 'inspection') {
+        const failRoll = Math.random() * 100;
+        if (failRoll < (station.failRate || 0)) {
+          unit.failed = true;
+          unit.status = 'failed';
+          state.failedCount += 1;
+          stationState.repair.queue.push(unit);
+          state.repairQueue = stationState.repair.queue.length;
+          addEvent(`${unit.id} failed inspection and was routed to repair.`);
+          return;
+        }
+        unit.status = 'passed';
+        addEvent(`${unit.id} passed ${station.name}.`);
+      } else if (station.type === 'repair') {
+        unit.status = 'repaired';
+        unit.repaired = true;
+        state.repairQueue = Math.max(0, stationState.repair.queue.length - 1);
+      } else if (station.type === 'output') {
+        state.totalCompleted += 1;
+        unit.status = 'complete';
+        addEvent(`${unit.id} completed shipping.`);
+        state.units = state.units.filter((item) => item.id !== unit.id);
+        updateKpis();
+        return;
+      }
+
+      const nextStation = station.type === 'repair' ? 'inspection' : (station.next || null);
+      if (nextStation) {
+        const target = stationMap[nextStation];
+        if (target && target.type === 'inspection') {
+          unit.currentStation = nextStation;
+          stationState[nextStation].queue.push(unit);
+          addEvent(`${unit.id} moved to ${target.name}.`);
+        } else {
+          unit.currentStation = nextStation;
+          stationState[nextStation].queue.push(unit);
+        }
+      }
+
+      if (station.type === 'inspection' && unit.failed) {
+        state.repairQueue = stationState.repair.queue.length;
+      }
+
+      updateKpis();
+    }
+
+    function advanceUnitFlow() {
+      Object.values(stationMap).forEach((station) => {
+        const stationItem = stationState[station.id];
+
+        if (stationItem.active) {
+          stationItem.active.processElapsed += 0.25;
+          if (stationItem.active.processElapsed >= station.processing) {
+            finishStation(station.id);
+          }
+        }
+
+        if (!stationItem.active && stationItem.queue.length > 0) {
+          startProcessingIfAvailable(station);
+        }
+      });
+
+      Object.keys(stationState).forEach((stationId) => {
+        const stationItem = stationState[stationId];
+        if (stationItem.active && stationItem.active.currentStation !== stationId) {
+          stationItem.active.currentStation = stationId;
+        }
+      });
+    }
+
+    function renderUnits() {
+      const layer = document.getElementById('unitLayer');
+      const activeUnits = [];
+
+      Object.values(stationState).forEach((stationItem) => {
+        if (stationItem.active) activeUnits.push(stationItem.active);
+        stationItem.queue.forEach((unit) => activeUnits.push(unit));
+      });
+
+      const elements = Array.from(layer.children);
+      const usedIds = new Set();
+
+      activeUnits.forEach((unit, index) => {
+        usedIds.add(unit.id);
+        let el = unitDisplayMap.get(unit.id);
+        if (!el) {
+          el = document.createElement('div');
+          el.className = 'unit';
+          el.textContent = unit.label;
+          unitDisplayMap.set(unit.id, el);
+          layer.appendChild(el);
+        }
+
+        const station = document.getElementById(`station-${unit.currentStation}`);
+        if (!station) {
+          el.style.display = 'none';
+          return;
+        }
+
+        const rect = station.getBoundingClientRect();
+        const parentRect = layer.getBoundingClientRect();
+        const x = rect.left - parentRect.left + rect.width * 0.5 + (index % 4) * 12 - 18;
+        const y = rect.top - parentRect.top + rect.height * 0.55 + (index % 3) * 6;
+
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.style.background = getUnitColor(unit);
+        el.classList.toggle('failed', unit.status === 'failed');
+        el.classList.toggle('repair', unit.status === 'repaired');
+        el.style.display = 'flex';
+      });
+
+      elements.forEach((element) => {
+        const id = element.textContent; 
+        if (!usedIds.has(`U-${id}`)) {
+          element.remove();
+          const match = [...unitDisplayMap.entries()].find(([key, value]) => value === element);
+          if (match) unitDisplayMap.delete(match[0]);
+        }
+      });
+    }
+
+    function tick() {
+      if (!state.running) return;
+      state.spawnAccumulator += 0.25;
+      const spawnInterval = 60 / state.inboundRate;
+      if (state.spawnAccumulator >= spawnInterval) {
+        state.spawnAccumulator = 0;
+        const newUnit = createUnit();
+        state.units.push(newUnit);
+      }
+
+      advanceUnitFlow();
+      renderStations();
+      renderUnits();
+      updateKpis();
+    }
+
+    function bindEvents() {
+      document.getElementById('startBtn').addEventListener('click', () => {
+        state.running = true;
+        addEvent('Production cycle resumed.');
+      });
+
+      document.getElementById('pauseBtn').addEventListener('click', () => {
+        state.running = false;
+        addEvent('Production cycle paused.');
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        state.running = false;
+        state.units = [];
+        state.totalIn = 0;
+        state.totalCompleted = 0;
+        state.failedCount = 0;
+        state.repairQueue = 0;
+        state.spawnAccumulator = 0;
+        state.eventLog = [];
+        Object.keys(stationState).forEach((id) => {
+          stationState[id].queue = [];
+          stationState[id].active = null;
+          stationState[id].activeElapsed = 0;
+        });
+        addEvent('Factory floor reset complete.');
+        updateKpis();
+        renderStations();
+        renderUnits();
+      });
+
+      document.getElementById('inboundRateInput').addEventListener('input', (event) => {
+        const value = Number(event.target.value) || 18;
+        state.inboundRate = Math.max(1, Math.min(120, value));
+        addEvent(`Inbound rate updated to ${state.inboundRate} units/min.`);
+      });
+
+      document.addEventListener('input', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        const stationId = target.dataset.stationId;
+        const field = target.dataset.stationField;
+        if (!stationId || !field) return;
+
+        const station = stationMap[stationId];
+        const value = Number(target.value);
+        if (!station || Number.isNaN(value)) return;
+
+        if (field === 'processing') {
+          station.processing = Math.max(0.5, value);
+          addEvent(`${station.name} process time updated to ${station.processing}s.`);
+        }
+
+        if (field === 'failRate') {
+          station.failRate = Math.max(0, Math.min(100, value));
+          addEvent(`${station.name} failure rate updated to ${station.failRate}%.`);
+        }
+
+        renderStations();
+      });
+    }
+
+    function init() {
+      createStationState();
+      renderStationControls();
+      renderStations();
+      renderEvents();
+      syncGlobalInput();
+      bindEvents();
+      state.units.push(createUnit());
+      stationState.receiving.queue.push(createUnit());
+      renderStations();
+      renderUnits();
+      updateKpis();
+      setInterval(tick, 250);
+    }
+
+    init();
+  </script>
 </body>
 </html>
+
