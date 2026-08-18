@@ -51,9 +51,9 @@
       justify-content: space-between;
       gap: 20px;
       margin-bottom: 18px;
-      padding: 18px 20px;
-      border-radius: 16px;
-      background: rgba(7, 21, 33, 0.7);
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: rgba(7, 21, 33, 0.72);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
     }
@@ -75,8 +75,35 @@
 
     .topbar-actions {
       display: flex;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .inline-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .inline-control input {
+      width: 70px;
+      border: 0;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 6px 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-align: center;
     }
 
     button {
@@ -97,12 +124,20 @@
 
     .kpis {
       display: grid;
-      grid-template-columns: repeat(5, minmax(150px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .board-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(180px, 1fr));
+      gap: 12px;
       margin-bottom: 18px;
     }
 
-    .kpi {
+    .kpi,
+    .summary-box {
       background: rgba(10, 22, 32, 0.78);
       border: 1px solid var(--line);
       border-radius: 16px;
@@ -110,7 +145,8 @@
       padding: 16px 18px;
     }
 
-    .kpi .label {
+    .kpi .label,
+    .summary-label {
       display: block;
       color: var(--muted);
       font-size: 0.72rem;
@@ -119,15 +155,26 @@
       margin-bottom: 10px;
     }
 
-    .kpi .value {
+    .kpi .value,
+    .summary-value {
       font-size: clamp(1.5rem, 2vw, 2.3rem);
       font-weight: 800;
       letter-spacing: 0.04em;
     }
 
+    .summary-box {
+      background: linear-gradient(135deg, rgba(69, 209, 255, 0.12), rgba(74, 141, 255, 0.08));
+      border-color: rgba(69, 209, 255, 0.38);
+    }
+
+    .summary-value {
+      display: block;
+      font-size: clamp(1.8rem, 2vw, 2.6rem);
+    }
+
     .workspace {
       display: grid;
-      grid-template-columns: 320px minmax(0, 1fr) 300px;
+      grid-template-columns: 1fr;
       gap: 18px;
     }
 
@@ -233,26 +280,37 @@
 
     .board {
       position: relative;
-      min-height: 760px;
+      min-height: 540px;
       overflow: hidden;
     }
 
     .board-inner {
       position: relative;
-      padding: 18px 18px 14px;
+      padding: 12px;
       height: 100%;
-      min-height: 760px;
+      min-height: 540px;
     }
 
     .floor {
       position: relative;
-      height: 680px;
+      height: 440px;
       background:
         linear-gradient(rgba(86, 158, 255, 0.06), rgba(86,158,255,0.06)),
         linear-gradient(180deg, rgba(8,17,24,0.9), rgba(11,31,46,0.9));
-      border-radius: 18px;
+      border-radius: 16px;
       border: 1px solid var(--line);
       overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(69, 209, 255, 0.08);
+    }
+
+    .floor::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(69, 209, 255, 0.08) 25%, transparent 50%, rgba(69, 209, 255, 0.08) 75%, transparent 100%);
+      transform: translateX(-100%);
+      animation: flowSweep 7s linear infinite;
+      pointer-events: none;
     }
 
     .floor-grid {
@@ -267,12 +325,13 @@
 
     .station-row {
       position: absolute;
-      left: 40px;
-      right: 40px;
-      top: 40px;
+      left: 18px;
+      right: 18px;
+      top: 28px;
       display: grid;
-      grid-template-columns: repeat(6, minmax(150px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      gap: 12px;
+      align-items: stretch;
     }
 
     .station {
@@ -281,12 +340,43 @@
       flex-direction: column;
       justify-content: space-between;
       min-height: 170px;
-      border-radius: 18px;
+      border-radius: 16px;
       border: 1px solid var(--line-strong);
-      background: linear-gradient(180deg, rgba(18, 45, 66, 0.9), rgba(10, 25, 40, 0.95));
+      background: linear-gradient(180deg, rgba(18, 45, 66, 0.92), rgba(10, 25, 40, 0.95));
       padding: 12px 10px 10px;
-      box-shadow: inset 0 0 0 1px rgba(110, 201, 255, 0.08), 0 10px 30px rgba(3, 15, 23, 0.4);
+      box-shadow: inset 0 0 0 1px rgba(110, 201, 255, 0.08), 0 10px 24px rgba(3, 15, 23, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      animation: stationPulse 3s ease-in-out infinite;
     }
+
+    .station.is-active {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 1px rgba(110, 201, 255, 0.12), 0 18px 30px rgba(70, 186, 255, 0.18), inset 0 0 25px rgba(69, 209, 255, 0.08);
+    }
+
+    .station::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 28%, transparent 70%, rgba(255,255,255,0.04));
+      pointer-events: none;
+    }
+
+    .station::after {
+      content: "→";
+      position: absolute;
+      right: -12px;
+      top: 46%;
+      transform: translateY(-50%);
+      color: rgba(130, 209, 255, 0.95);
+      font-size: 1.25rem;
+      font-weight: 900;
+      text-shadow: 0 0 10px rgba(69, 209, 255, 0.7);
+      animation: arrowPulse 1.6s ease-in-out infinite;
+    }
+
+    .station:last-child::after { content: ""; }
 
     .station[data-type="source"] { border-color: rgba(69, 209, 255, 0.7); }
     .station[data-type="inspection"] { border-color: rgba(255, 191, 71, 0.85); }
@@ -298,7 +388,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 6px;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -306,11 +396,11 @@
     }
 
     .station-name {
-      font-size: 1rem;
+      font-size: 1.08rem;
       font-weight: 800;
       letter-spacing: 0.03em;
       color: var(--text);
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .station-metrics {
@@ -318,18 +408,18 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-top: 5px;
+      margin-top: 6px;
     }
 
     .station-time {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--muted);
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .station-badge {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 800;
       color: var(--text);
       background: rgba(255,255,255,0.04);
@@ -341,25 +431,27 @@
     .queue {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      min-height: 38px;
+      gap: 5px;
+      min-height: 28px;
       margin-top: 10px;
+      align-items: center;
     }
 
     .unit-chip {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 28px;
+      min-width: 24px;
       height: 22px;
       border-radius: 999px;
-      padding: 0 8px;
-      font-size: 0.68rem;
+      padding: 0 7px;
+      font-size: 0.62rem;
       font-weight: 800;
       color: #081a29;
       background: linear-gradient(135deg, #b6eaff, #62d0ff);
       border: 1px solid rgba(255,255,255,0.3);
       box-shadow: 0 4px 14px rgba(53, 147, 255, 0.25);
+      animation: chipFloat 2.1s ease-in-out infinite alternate;
     }
 
     .station[data-type="repair"] .unit-chip { background: linear-gradient(135deg, #ffc4c8, #ff8d96); }
@@ -392,49 +484,25 @@
     }
 
     .unit-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      display: none;
     }
 
     .unit {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.85);
-      box-shadow: 0 10px 18px rgba(91, 186, 255, 0.42);
-      transform: translate(-50%, -50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.58rem;
-      font-weight: 900;
-      color: #071521;
-      overflow: hidden;
-      transition: box-shadow 0.2s ease;
+      display: none;
     }
 
-    .unit.failed { box-shadow: 0 10px 18px rgba(255, 111, 122, 0.44); }
-    .unit.repair { box-shadow: 0 10px 18px rgba(255,191,71,0.44); }
+    .unit.failed { display: none; }
+    .unit.repair { display: none; }
 
     .stream {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 16px 18px 18px;
-      height: 100%;
-      min-height: 760px;
+      display: none;
     }
 
     .event-feed {
       list-style: none;
       padding: 0;
       margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      overflow: auto;
+      display: none;
     }
 
     .event {
@@ -470,6 +538,32 @@
       border-radius: 50%;
       background: var(--green);
       box-shadow: 0 0 12px rgba(74,229,165,0.9);
+      animation: dotBlink 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes flowSweep {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes stationPulse {
+      0%, 100% { box-shadow: inset 0 0 0 1px rgba(110, 201, 255, 0.08), 0 10px 24px rgba(3, 15, 23, 0.35); }
+      50% { box-shadow: inset 0 0 0 1px rgba(110, 201, 255, 0.18), 0 14px 30px rgba(62, 165, 255, 0.18); }
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { opacity: 0.6; transform: translateY(-50%) scale(1); }
+      50% { opacity: 1; transform: translateY(-50%) scale(1.12); }
+    }
+
+    @keyframes chipFloat {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-2px); }
+    }
+
+    @keyframes dotBlink {
+      0% { opacity: 0.6; box-shadow: 0 0 8px rgba(74,229,165,0.7); }
+      100% { opacity: 1; box-shadow: 0 0 16px rgba(74,229,165,1); }
     }
 
     @media (max-width: 1200px) {
@@ -495,6 +589,16 @@
         <h1>Production Flow Board</h1>
       </div>
       <div class="topbar-actions">
+        <div class="inline-control">
+          <label for="inboundRateInput">Inflow</label>
+          <input id="inboundRateInput" type="number" min="1" max="120" value="18" />
+          <span>u/min</span>
+        </div>
+        <div class="inline-control">
+          <label for="inspectionFailInput">Fail</label>
+          <input id="inspectionFailInput" type="number" min="0" max="100" value="18" />
+          <span>%</span>
+        </div>
         <button id="startBtn" class="primary">Start</button>
         <button id="pauseBtn" class="secondary">Pause</button>
         <button id="resetBtn" class="ghost">Reset</button>
@@ -524,20 +628,22 @@
       </div>
     </section>
 
-    <section class="workspace">
-      <aside class="panel">
-        <div class="panel-header">
-          <h2 class="panel-title">Station Setup</h2>
-        </div>
-        <div class="panel-body">
-          <div class="global-config field">
-            <label for="inboundRateInput">Inbound rate (units/min)</label>
-            <input id="inboundRateInput" type="number" min="1" max="120" value="18" />
-          </div>
-          <div id="stationControls" class="station-controls"></div>
-        </div>
-      </aside>
+    <section class="board-summary">
+      <div class="summary-box">
+        <span class="summary-label">Input Units</span>
+        <span class="summary-value" id="boardInputValue">0</span>
+      </div>
+      <div class="summary-box">
+        <span class="summary-label">Output Units</span>
+        <span class="summary-value" id="boardOutputValue">0</span>
+      </div>
+      <div class="summary-box">
+        <span class="summary-label">Yield</span>
+        <span class="summary-value" id="boardYieldValue">0%</span>
+      </div>
+    </section>
 
+    <section class="workspace">
       <main class="panel board">
         <div class="panel-header">
           <h2 class="panel-title">Live Floor</h2>
@@ -551,16 +657,11 @@
           </div>
         </div>
       </main>
-
-      <aside class="panel">
-        <div class="panel-header">
-          <h2 class="panel-title">Production Feed</h2>
-        </div>
-        <div class="stream">
-          <ul id="eventFeed" class="event-feed"></ul>
-        </div>
-      </aside>
     </section>
+
+    <div class="stream" style="display:none;">
+      <ul id="eventFeed" class="event-feed"></ul>
+    </div>
   </div>
 
   <script>
@@ -615,29 +716,7 @@
 
     function syncGlobalInput() {
       document.getElementById('inboundRateInput').value = state.inboundRate;
-    }
-
-    function renderStationControls() {
-      const controls = document.getElementById('stationControls');
-      controls.innerHTML = stationDefinitions.map((station) => {
-        const failField = station.type === 'inspection'
-          ? `<div class="field small"><label>Failure rate (%)</label><input data-station-field="failRate" data-station-id="${station.id}" type="number" min="0" max="100" value="${station.failRate || 0}" /></div>`
-          : '';
-
-        return `
-          <div class="station-config-card">
-            <div class="station-head">
-              <strong>${station.name}</strong>
-              <span class="tag ${station.type}">${station.type}</span>
-            </div>
-            <div class="field small">
-              <label>Processing time (s)</label>
-              <input data-station-field="processing" data-station-id="${station.id}" type="number" min="0.5" max="30" step="0.1" value="${station.processing}" />
-            </div>
-            ${failField}
-          </div>
-        `;
-      }).join('');
+      document.getElementById('inspectionFailInput').value = stationMap.inspection.failRate || 0;
     }
 
     function renderStations() {
@@ -652,8 +731,9 @@
 
         const queueUnits = stationItem.queue.slice(0, 4).map((unit) => `<div class="unit-chip" style="background: ${getUnitColor(unit)};">${unit.label}</div>`).join('');
 
+        const isActive = Boolean(stationItem.active);
         return `
-          <div id="station-${station.id}" class="station" data-type="${station.type}">
+          <div id="station-${station.id}" class="station ${isActive ? 'is-active' : ''}" data-type="${station.type}">
             <div>
               <div class="station-headline">
                 <span>${station.type}</span>
@@ -701,15 +781,19 @@
     }
 
     function updateKpis() {
-      const totalUnits = state.units.length;
       const inProcess = Object.values(stationState).reduce((sum, st) => sum + st.queue.length + (st.active ? 1 : 0), 0);
       const completed = state.totalCompleted;
       const yield = state.totalIn ? ((completed / state.totalIn) * 100).toFixed(1) : 0;
+
       document.getElementById('inboundValue').textContent = state.totalIn;
       document.getElementById('wipValue').textContent = inProcess;
       document.getElementById('completedValue').textContent = completed;
       document.getElementById('yieldValue').textContent = `${yield}%`;
       document.getElementById('repairValue').textContent = state.repairQueue;
+
+      document.getElementById('boardInputValue').textContent = state.totalIn;
+      document.getElementById('boardOutputValue').textContent = completed;
+      document.getElementById('boardYieldValue').textContent = `${yield}%`;
     }
 
     function startProcessingIfAvailable(station) {
@@ -807,55 +891,7 @@
     }
 
     function renderUnits() {
-      const layer = document.getElementById('unitLayer');
-      const activeUnits = [];
-
-      Object.values(stationState).forEach((stationItem) => {
-        if (stationItem.active) activeUnits.push(stationItem.active);
-        stationItem.queue.forEach((unit) => activeUnits.push(unit));
-      });
-
-      const elements = Array.from(layer.children);
-      const usedIds = new Set();
-
-      activeUnits.forEach((unit, index) => {
-        usedIds.add(unit.id);
-        let el = unitDisplayMap.get(unit.id);
-        if (!el) {
-          el = document.createElement('div');
-          el.className = 'unit';
-          el.textContent = unit.label;
-          unitDisplayMap.set(unit.id, el);
-          layer.appendChild(el);
-        }
-
-        const station = document.getElementById(`station-${unit.currentStation}`);
-        if (!station) {
-          el.style.display = 'none';
-          return;
-        }
-
-        const rect = station.getBoundingClientRect();
-        const parentRect = layer.getBoundingClientRect();
-        const x = rect.left - parentRect.left + rect.width * 0.5 + (index % 4) * 12 - 18;
-        const y = rect.top - parentRect.top + rect.height * 0.55 + (index % 3) * 6;
-
-        el.style.left = `${x}px`;
-        el.style.top = `${y}px`;
-        el.style.background = getUnitColor(unit);
-        el.classList.toggle('failed', unit.status === 'failed');
-        el.classList.toggle('repair', unit.status === 'repaired');
-        el.style.display = 'flex';
-      });
-
-      elements.forEach((element) => {
-        const id = element.textContent; 
-        if (!usedIds.has(`U-${id}`)) {
-          element.remove();
-          const match = [...unitDisplayMap.entries()].find(([key, value]) => value === element);
-          if (match) unitDisplayMap.delete(match[0]);
-        }
-      });
+      // Unit badges remain inside station cards to avoid floating overlays.
     }
 
     function tick() {
@@ -911,34 +947,17 @@
         addEvent(`Inbound rate updated to ${state.inboundRate} units/min.`);
       });
 
-      document.addEventListener('input', (event) => {
-        const target = event.target;
-        if (!(target instanceof HTMLElement)) return;
-        const stationId = target.dataset.stationId;
-        const field = target.dataset.stationField;
-        if (!stationId || !field) return;
-
-        const station = stationMap[stationId];
-        const value = Number(target.value);
-        if (!station || Number.isNaN(value)) return;
-
-        if (field === 'processing') {
-          station.processing = Math.max(0.5, value);
-          addEvent(`${station.name} process time updated to ${station.processing}s.`);
-        }
-
-        if (field === 'failRate') {
-          station.failRate = Math.max(0, Math.min(100, value));
-          addEvent(`${station.name} failure rate updated to ${station.failRate}%.`);
-        }
-
+      document.getElementById('inspectionFailInput').addEventListener('input', (event) => {
+        const value = Number(event.target.value) || 0;
+        const failRate = Math.max(0, Math.min(100, value));
+        stationMap.inspection.failRate = failRate;
+        addEvent(`Inspection failure rate updated to ${failRate}%.`);
         renderStations();
       });
     }
 
     function init() {
       createStationState();
-      renderStationControls();
       renderStations();
       renderEvents();
       syncGlobalInput();
